@@ -9,12 +9,18 @@
 <body>
     <div class="container"> <!-- Centers content and sets max width -->
         <h1>Gender Employment Share by Country, Income Group, and Year</h1>
+        <p>Countries are sorted with the most even gender split at the top and the most lopsided at the bottom</p>
         <div id="slider"></div>
         Employment Type:  <select id="employmentVar" class="evariable" ></select>
         Income Level: <select id="incomeVariable" class="ivariable" ></select>
         <div id="vis"></div> <!--  Will hold our visualization (SVG) -->
+
+        <h1>Gender Employment Share by Country and Income Group</h1>
+        Employment Type:  <select id="employmentVar2" class="evariable2" ></select>
+        Income Level: <select id="incomeVariable2" class="ivariable2" ></select>
+        <div id="vis2"></div> <!--  Will hold our visualization (SVG) -->
       
-    </div>
+    </div> 
     
     <!-- Load D3.js -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -30,7 +36,7 @@
           .default(1991)
           .on('onchange', (val) => {
           targetYear = +val // Update the year
-          updateVis() // Refresh the chart
+          updateVis(svg) // Refresh the chart
           });
           
   

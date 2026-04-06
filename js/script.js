@@ -67,6 +67,47 @@ svg.append("text")
     .attr("y", -margin.left + 15)
     .text("Country");
 
+const svg2 = d3.select('#vis2')
+    .append('svg')
+    .attr('width', width + margin.left + margin.right)
+    .attr('height', height + margin.top + margin.bottom)
+    .append('g')
+    .attr('transform', `translate(${margin.left},${margin.top})`);
+
+const xGridGroup2 = svg2.append("g")
+    .attr("class", "x-grid")
+    .attr("transform", "translate(0,0)");
+
+const xAxisGroup2 = svg2.append("g")
+    .attr("class", "x-axis")
+    .attr("transform", "translate(0,0)");
+
+const yAxisGroup2 = svg2.append("g")
+    .attr("class", "y-axis");
+
+const zeroLine2 = svg2.append("line")
+    .attr("class", "zero-line")
+    .attr("y1", 0)
+    .attr("y2", height)
+    .attr("stroke", "#666")
+    .attr("stroke-dasharray", "4 4");
+
+svg2.append("text")
+    .attr("class", "axis-label x-axis-label")
+    .attr("text-anchor", "middle")
+    .attr("x", width / 2)
+    .attr("y", -35)
+    .text("Employment Share (%)");
+
+svg2.append("text")
+    .attr("class", "axis-label y-axis-label")
+    .attr("text-anchor", "middle")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -height / 2)
+    .attr("y", -margin.left + 15)
+    .text("Country");
+
+
 xScale = d3.scaleLinear();
 yScale = d3.scaleBand();
 
@@ -94,24 +135,30 @@ function init(){
                 // placeholder for building vis
                 // placeholder for adding listerners
     
+                setupSelector(svg); 
+                setupSelector(svg2);
                 
-    
-                setupSelector(); 
-                
-                d3.select("#employmentVar").property("value", employmentVar);
-                d3.select("#incomeVariable").property("value", incomeVariable);
+                d3.select("#employmentVar1").property("value", employmentVar);
+                d3.select("#incomeVariable1").property("value", incomeVariable);
+                d3.select("#employmentVar2").property("value", employmentVar);
+                d3.select("#incomeVariable2").property("value", incomeVariable);
 
-                updateVis();
+                updateVis(svg);
+                updateVis(svg2);
     
-                
-             
-                
             })
         .catch(error => console.error('Error loading data:', error));
     }
 
-function setupSelector() {
-    d3.selectAll('.evariable')
+function setupSelector(svgvar) {
+    if(svgvar == svg){
+        eclass = '.evariable'
+        iclass = '.ivariable'
+    } else {
+        eclass = '.evariable2'
+        iclass = '.ivariable2'
+    }
+    d3.selectAll(eclass)
         .each(function() {
         d3.select(this)
             .selectAll('option')
@@ -123,10 +170,10 @@ function setupSelector() {
         })
         .on('change', function() {
         employmentVar = d3.select(this).property('value');
-        updateVis();
+        updateVis(svgvar);
         });
     
-    d3.selectAll('.ivariable')
+    d3.selectAll(iclass)
         .each(function() {
         d3.select(this)
             .selectAll('option')
@@ -138,11 +185,11 @@ function setupSelector() {
         })
         .on('change', function() {
         incomeVariable = d3.select(this).property('value');
-        updateVis();
+        updateVis(svgvar);
         });
     }
 
-function getFilteredData() {
+function getFilteredData(svgvar) {
     const grouped = d3.group(
         allData.filter(d =>
             d.indicator.includes(employmentVar) &&
@@ -151,7 +198,7 @@ function getFilteredData() {
         d => d.country
     );
 
-    return Array.from(grouped, ([country, rows]) => {
+    let arr = Array.from(grouped, ([country, rows]) => {
         const maleValue = rows.find(d => d.indicator.includes("male"))?.[targetYear];
         const femaleValue = rows.find(d => d.indicator.includes("female"))?.[targetYear];
     
@@ -165,21 +212,44 @@ function getFilteredData() {
         !Number.isNaN(d.male_value) &&
         d.female_value != null &&
         !Number.isNaN(d.female_value)
-    ).sort((a, b) =>
-    Math.abs(a.male_value / a.female_value - 1) - Math.abs(b.male_value / b.female_value - 1)
-);
+    );
+    
+    if(svgvar == svg){
+        arr = arr.sort((a, b) =>
+            Math.abs(a.male_value / a.female_value - 1) - Math.abs(b.male_value / b.female_value - 1));
+    } else {
+        // AI generated deterministic nonsensical sorting
+        arr = arr.sort((a, b) => {
+            const scoreA =
+                a.country.length *
+                Math.sin(a.male_value) +
+                a.country.charCodeAt(0);
 
+            const scoreB =
+                b.country.length *
+                Math.sin(b.male_value) +
+                b.country.charCodeAt(0);
+
+            return scoreA - scoreB;
+        });
+    }
+
+    return arr;
 }
 
-function updateVis() {
-    const filteredData = getFilteredData();
-    updateAxes(filteredData);
+function updateVis(svgvar) {
+    const filteredData = getFilteredData(svgvar);
+    if (svgvar == svg){
+        updateAxes(filteredData);
+    } else {
+        updateAxes2(filteredData);
+    }
     
     const barHeight = Math.min(yScale.bandwidth(), 20);
     const barOffset = (yScale.bandwidth() - barHeight) / 2;
-    const transition = svg.transition().duration(t).ease(d3.easeCubicInOut);
+    const transition = svgvar.transition().duration(t).ease(d3.easeCubicInOut);
 
-    svg.selectAll(".male-bar")
+    svgvar.selectAll(".male-bar")
         .data(filteredData, d => d.country)
         .join(
             enter => enter
@@ -207,7 +277,7 @@ function updateVis() {
                 .remove())
         );
 
-    svg.selectAll(".female-bar")
+    svgvar.selectAll(".female-bar")
         .data(filteredData, d => d.country)
         .join(
             enter => enter
@@ -235,7 +305,7 @@ function updateVis() {
                 .attr("width", 0)
                 .remove())
         );
-    addLegend(); 
+    addLegend(svgvar); 
 }
 
 function updateAxes(filteredData) {
@@ -283,10 +353,10 @@ function updateAxes(filteredData) {
         .attr("x2", xScale(0));
     }
 
-function addLegend() {
-    svg.selectAll(".sexSquare").remove();
+function addLegend(svgvar) {
+    svgvar.selectAll(".sexSquare").remove();
   
-    const legend = svg.append("g")
+    const legend = svgvar.append("g")
       .attr("class", "sexSquare")
       .attr("transform", `translate(${width - 165}, ${-42})`);
 
@@ -313,8 +383,50 @@ function addLegend() {
       .style("fill", d => colorScale(d))
       .text(d => d);
 }
+
+function updateAxes2(filteredData) {
+    // Build symmetric x-domain so men extend left and women extend right
+    const maxValue = d3.max(filteredData, d =>
+        Math.max(+d.male_value || 0, +d.female_value || 0)
+    ) || 0;
+    const bufferedMax = maxValue * 1.1;
     
+    xScale
+        .domain([-bufferedMax, bufferedMax])
+        .range([0, width]);
+    
+    yScale
+        .domain(filteredData.map(d => d.country))
+        .range([0, height])
+        .padding(0.2);
 
+    const axisTransition = svg2.transition().duration(t).ease(d3.easeCubicInOut);
 
+    xGridGroup2
+        .transition(axisTransition)
+        .call(
+            d3.axisTop(xScale)
+                .ticks(8)
+                .tickSize(-height)
+                .tickFormat("")
+        );
+
+    xAxisGroup2
+        .transition(axisTransition)
+        .call(
+            d3.axisTop(xScale)
+                .ticks(8)
+                .tickFormat(d => Math.abs(d))
+        );
+
+    yAxisGroup2
+        .transition(axisTransition)
+        .call(d3.axisLeft(yScale));
+
+    zeroLine2
+        .transition(axisTransition)
+        .attr("x1", xScale(0))
+        .attr("x2", xScale(0));
+    }
 
 window.addEventListener('load', init);
