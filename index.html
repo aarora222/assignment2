@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment 2</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container"> <!-- Centers content and sets max width -->
+        <h1>Gender Employment Share by Country, Income Group, and Year</h1>
+        <div id="slider"></div>
+        Employment Type:  <select id="employmentVar" class="evariable" ></select>
+        Income Level: <select id="incomeVariable" class="ivariable" ></select>
+        <div id="vis"></div> <!--  Will hold our visualization (SVG) -->
+      
+    </div>
+    
+    <!-- Load D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/d3-simple-slider"></script>
+    <script>
+      var slider = d3
+          .sliderHorizontal()
+          .min(1991)
+          .max(2019)
+          .step(1)
+          .width(600)
+          .displayValue(false)
+          .default(1991)
+          .on('onchange', (val) => {
+          targetYear = +val // Update the year
+          updateVis() // Refresh the chart
+          });
+          
+  
+      d3.select('#slider')
+          .append('svg')
+          .attr('width', 700)
+          .attr('height', 100)
+          .append('g')
+          .attr('transform', 'translate(30,30)')
+          .call(slider);
+  </script>
+  <script src="js/script.js"></script>
+</body>
+</html>
