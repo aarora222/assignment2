@@ -2,6 +2,7 @@ const margin = {top: 50, right: 40, bottom: 40, left: 180};
 const width = 800 - margin.left - margin.right;
 const height = 2000 - margin.top - margin.bottom;
 const incomeLevels = ["High income", "Low income", "Lower middle income", "Upper middle income"]
+const sex = ["Male", "Female"]
 const employmentTypes  = [
     "Employment in services",
     "Employment in industry",
@@ -21,6 +22,10 @@ employmentVar = "Employment in services";
 let xScale, yScale, sizeScale
 targetYear = 1991; 
 
+const colorScale = d3.scaleOrdinal()
+  .domain(["Male", "Female"])
+  .range(["steelblue", "tomato"]);
+
 
 const svg = d3.select('#vis')
     .append('svg')
@@ -28,6 +33,10 @@ const svg = d3.select('#vis')
     .attr('height', height + margin.top + margin.bottom)
     .append('g')
     .attr('transform', `translate(${margin.left},${margin.top})`);
+
+const xGridGroup = svg.append("g")
+    .attr("class", "x-grid")
+    .attr("transform", "translate(0,0)");
 
 const xAxisGroup = svg.append("g")
     .attr("class", "x-axis")
@@ -156,12 +165,16 @@ function getFilteredData() {
         !Number.isNaN(d.male_value) &&
         d.female_value != null &&
         !Number.isNaN(d.female_value)
-    );
+    ).sort((a, b) =>
+    Math.abs(a.male_value / a.female_value - 1) - Math.abs(b.male_value / b.female_value - 1)
+);
+
 }
 
 function updateVis() {
     const filteredData = getFilteredData();
     updateAxes(filteredData);
+    
     const barHeight = Math.min(yScale.bandwidth(), 20);
     const barOffset = (yScale.bandwidth() - barHeight) / 2;
     const transition = svg.transition().duration(t).ease(d3.easeCubicInOut);
@@ -222,6 +235,7 @@ function updateVis() {
                 .attr("width", 0)
                 .remove())
         );
+    addLegend(); 
 }
 
 function updateAxes(filteredData) {
@@ -242,6 +256,15 @@ function updateAxes(filteredData) {
 
     const axisTransition = svg.transition().duration(t).ease(d3.easeCubicInOut);
 
+    xGridGroup
+        .transition(axisTransition)
+        .call(
+            d3.axisTop(xScale)
+                .ticks(8)
+                .tickSize(-height)
+                .tickFormat("")
+        );
+
     xAxisGroup
         .transition(axisTransition)
         .call(
@@ -259,6 +282,37 @@ function updateAxes(filteredData) {
         .attr("x1", xScale(0))
         .attr("x2", xScale(0));
     }
+
+function addLegend() {
+    svg.selectAll(".sexSquare").remove();
+  
+    const legend = svg.append("g")
+      .attr("class", "sexSquare")
+      .attr("transform", `translate(${width - 165}, ${-42})`);
+
+    const size = 10;
+    const gap = 82;
+  
+    const items = legend.selectAll(".sex")
+      .data(sex)
+      .enter()
+      .append("g")
+      .attr("class", "sex")
+      .attr("transform", (d, i) => `translate(${i * gap}, 0)`);
+
+    items.append("rect")
+      .attr("width", size)
+      .attr("height", size)
+      .style("fill", d => colorScale(d))
+  
+    items.append("text")
+      .attr("x", size + 8  )
+      .attr("y", size - 4 )
+      .style("alignment-baseline", "middle")
+      .style("font-size", "12px")
+      .style("fill", d => colorScale(d))
+      .text(d => d);
+}
     
 
 

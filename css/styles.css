@@ -30,6 +30,15 @@
     font-family: Arial, sans-serif;
 }
 
+.x-grid line {
+    stroke: #d9d9d9;
+    stroke-dasharray: 2 2;
+}
+
+.x-grid path {
+    display: none;
+}
+
 .axis-label {
     font-size: 14px;
     font-weight: bold;
