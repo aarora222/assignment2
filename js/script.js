@@ -1,7 +1,7 @@
 const margin = {top: 50, right: 220, bottom: 40, left: 180};
-const width = 800 - margin.left - margin.right;
+const width = 1000 - margin.left - margin.right;
 const height = 2000 - margin.top - margin.bottom;
-const incomeLevels = ["High income", "Low income", "Lower middle income", "Upper middle income"]
+const incomeLevels = ["All income", "High income", "Low income", "Lower middle income", "Upper middle income"]
 const sex = ["Male", "Female"]
 const employmentTypes  = [
     "Employment in services",
@@ -140,8 +140,8 @@ function init(){
                 setupSelector(svg); 
                 setupSelector(svg2);
                 
-                d3.select("#employmentVar1").property("value", employmentVar);
-                d3.select("#incomeVariable1").property("value", incomeVariable);
+                d3.select("#employmentVar").property("value", employmentVar);
+                d3.select("#incomeVariable").property("value", incomeVariable);
                 d3.select("#employmentVar2").property("value", employmentVar);
                 d3.select("#incomeVariable2").property("value", incomeVariable);
 
@@ -195,7 +195,7 @@ function getFilteredData(svgvar) {
     const grouped = d3.group(
         allData.filter(d =>
             d.indicator.includes(employmentVar) &&
-            d.incomeGroup === incomeVariable
+            (incomeVariable === "All income" || d.incomeGroup === incomeVariable)
         ),
         d => d.country
     );
