@@ -24,7 +24,7 @@ targetYear = 1991;
 
 const colorScale = d3.scaleOrdinal()
   .domain(["Male", "Female"])
-  .range(["steelblue", "tomato"]);
+  .range(["steelblue", "hotpink"]);
 
 
 const svg = d3.select('#vis')
@@ -154,9 +154,11 @@ function setupSelector(svgvar) {
     if(svgvar == svg){
         eclass = '.evariable'
         iclass = '.ivariable'
+        ilevels = incomeLevels
     } else {
         eclass = '.evariable2'
         iclass = '.ivariable2'
+        ilevels = [incomeLevels[0], incomeLevels[3]]
     }
     d3.selectAll(eclass)
         .each(function() {
@@ -177,7 +179,7 @@ function setupSelector(svgvar) {
         .each(function() {
         d3.select(this)
             .selectAll('option')
-            .data(incomeLevels)
+            .data(ilevels)
             .enter()
             .append('option')
             .text(d => d)
@@ -287,7 +289,7 @@ function updateVis(svgvar) {
                 .attr("y", d => yScale(d.country) + barOffset)
                 .attr("width", 0)
                 .attr("height", barHeight)
-                .attr("fill", "tomato")
+                .attr("fill", "hotpink")
                 .call(enter => enter
                     .transition(transition)
                     .attr("x", d => xScale(-d.female_value))
@@ -392,7 +394,7 @@ function updateAxes2(filteredData) {
     const bufferedMax = maxValue * 1.1;
     
     xScale
-        .domain([-bufferedMax, bufferedMax])
+        .domain([-100, 100])
         .range([0, width]);
     
     yScale
