@@ -562,8 +562,13 @@ function addLegend(svgvar) {
 }
 
 function updateAxes2(filteredData) {
+    const maxValue = d3.max(filteredData, d =>
+        Math.max(+d.male_value || 0, +d.female_value || 0)
+    ) || 0;
+    const bufferedMax = maxValue * 1.1;
+    
     xScale
-        .domain([-100, 100])
+        .domain([-bufferedMax, bufferedMax])
         .range([0, width]);
     
     yScale
