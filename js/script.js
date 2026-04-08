@@ -4,10 +4,10 @@ const height = 2000 - margin.top - margin.bottom;
 const incomeLevels = ["All income", "High income", "Low income", "Lower middle income", "Upper middle income"]
 const sex = ["Male", "Female"]
 const employmentTypes  = [
+    "Wage and salaried workers",
     "Employment in services",
     "Employment in industry",
     "Contributing family workers",
-    "Wage and salaried workers",
     "Vulnerable employment",
     "Self-employed",
     "Employers",
@@ -16,9 +16,14 @@ const employmentTypes  = [
 const t = 1000; 
 
 let allData = []
-let employmentVar, incomeVariable, targetYear
-incomeVariable = "High income"; 
-employmentVar = "Employment in services"; 
+let employmentVar_vis1, incomeVariable_vis1, employmentVar_vis2, incomeVariable_vis2, targetYear
+
+incomeVariable_vis1 = "High income"; 
+employmentVar_vis1 = "Wage and salaried workers"; 
+
+incomeVariable_vis2 = "High income"; 
+employmentVar_vis2 = "Wage and salaried workers"; 
+
 let xScale, yScale, sizeScale
 targetYear = 1991; 
 
@@ -59,7 +64,7 @@ svg.append("text")
     .attr("text-anchor", "middle")
     .attr("x", xLabelX)
     .attr("y", xLabelY)
-    .text("Employment Share (%)");
+    .text("Employment Share (% of Employed Men/Women)");
 
 svg.append("text")
     .attr("class", "axis-label y-axis-label")
@@ -99,7 +104,7 @@ svg2.append("text")
     .attr("text-anchor", "middle")
     .attr("x", xLabelX)
     .attr("y", xLabelY)
-    .text("Employment Share (%)");
+    .text("Wage and Salaried Employment Share");
 
 svg2.append("text")
     .attr("class", "axis-label y-axis-label")
@@ -140,10 +145,9 @@ function init(){
                 setupSelector(svg); 
                 setupSelector(svg2);
                 
-                d3.select("#employmentVar").property("value", employmentVar);
-                d3.select("#incomeVariable").property("value", incomeVariable);
-                d3.select("#employmentVar2").property("value", employmentVar);
-                d3.select("#incomeVariable2").property("value", incomeVariable);
+                d3.select("#employmentVar").property("value", employmentVar_vis1);
+                d3.select("#incomeVariable").property("value", incomeVariable_vis1);
+                d3.select("#incomeVariable2").property("value", incomeVariable_vis2);
 
                 updateVis(svg);
                 updateVis(svg2);
@@ -153,29 +157,35 @@ function init(){
     }
 
 function setupSelector(svgvar) {
+
+    
     if(svgvar == svg){
         eclass = '.evariable'
         iclass = '.ivariable'
         ilevels = incomeLevels
     } else {
-        eclass = '.evariable2'
+        eclass = "Wage and salaried workers"
         iclass = '.ivariable2'
-        ilevels = [incomeLevels[0], incomeLevels[3]]
+        ilevels = [incomeLevels[1], incomeLevels[3], incomeLevels[4]] // Only displaying data which supports our claim for 2nd vis
+
     }
-    d3.selectAll(eclass)
-        .each(function() {
-        d3.select(this)
-            .selectAll('option')
-            .data(employmentTypes)
-            .enter()
-            .append('option')
-            .text(d => d)
-            .attr('value', d => d);
-        })
-        .on('change', function() {
-        employmentVar = d3.select(this).property('value');
-        updateVis(svgvar);
-        });
+    
+    if (svgvar == svg) {
+        d3.selectAll(eclass)
+            .each(function() {
+            d3.select(this)
+                .selectAll('option')
+                .data(employmentTypes)
+                .enter()
+                .append('option')
+                .text(d => d)
+                .attr('value', d => d);
+            })
+            .on('change', function() {
+            employmentVar_vis1 = d3.select(this).property('value');
+            updateVis(svgvar);
+            });
+    }
     
     d3.selectAll(iclass)
         .each(function() {
@@ -188,16 +198,23 @@ function setupSelector(svgvar) {
             .attr('value', d => d);
         })
         .on('change', function() {
-        incomeVariable = d3.select(this).property('value');
+            if (svgvar == svg) {
+                incomeVariable_vis1 = d3.select(this).property('value');
+            } else {
+                incomeVariable_vis2 = d3.select(this).property('value');
+
+            }
         updateVis(svgvar);
         });
     }
 
 function getFilteredData(svgvar) {
+    iVar = svgvar === svg ? incomeVariable_vis1  : incomeVariable_vis2
+    eVar =  svgvar === svg ? employmentVar_vis1  : employmentVar_vis2
     const grouped = d3.group(
         allData.filter(d =>
-            d.indicator.includes(employmentVar) &&
-            (incomeVariable === "All income" || d.incomeGroup === incomeVariable)
+            d.indicator.includes(eVar) &&
+            (iVar === "All income" || d.incomeGroup === iVar)
         ),
         d => d.country
     );
@@ -218,25 +235,9 @@ function getFilteredData(svgvar) {
         !Number.isNaN(d.female_value)
     );
     
-    if(svgvar == svg){
-        arr = arr.sort((a, b) =>
-            Math.abs(a.male_value / a.female_value - 1) - Math.abs(b.male_value / b.female_value - 1));
-    } else {
-        // AI generated deterministic nonsensical sorting
-        arr = arr.sort((a, b) => {
-            const scoreA =
-                a.country.length *
-                Math.sin(a.male_value) +
-                a.country.charCodeAt(0);
-
-            const scoreB =
-                b.country.length *
-                Math.sin(b.male_value) +
-                b.country.charCodeAt(0);
-
-            return scoreA - scoreB;
-        });
-    }
+    arr = arr.sort((a, b) =>
+        Math.abs(a.male_value / a.female_value - 1) - Math.abs(b.male_value / b.female_value - 1));
+    
 
     return arr;
 }
@@ -529,7 +530,7 @@ function addLegend(svgvar) {
     svgvar.selectAll(".sexSquare").remove();
 
     const legendWidth = 165;
-    const legendX = width - legendWidth + 70;
+    const legendX = width - legendWidth + 220;
     const legendY = -margin.top + 8;
   
     const legend = svgvar.append("g")
@@ -561,8 +562,13 @@ function addLegend(svgvar) {
 }
 
 function updateAxes2(filteredData) {
+    const maxValue = d3.max(filteredData, d =>
+        Math.max(+d.male_value || 0, +d.female_value || 0)
+    ) || 0;
+    const bufferedMax = maxValue * 1.1;
+    
     xScale
-        .domain([-100, 100])
+        .domain([-bufferedMax, bufferedMax])
         .range([0, width]);
     
     yScale

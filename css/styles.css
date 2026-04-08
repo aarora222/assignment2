@@ -22,8 +22,8 @@ select {
     
 }
 
-#vis svg {
-    margin: 2rem 0;
+#vis, #vis2, svg {
+    margin: 1rem 0;
 }
 
 .x-axis path,
@@ -60,10 +60,7 @@ select {
     max-width: 700px;
   }
   
-#year {
-    width: 100%;
-    margin-bottom: 5px;
-}
+
   
 .slider-labels {
     display: flex;
