@@ -10,16 +10,56 @@
     <div class="container"> <!-- Centers content and sets max width -->
         <div class="non-svg">
           <h1>Gender Employment Share by Country, Income Group, and Year</h1>
-          <p>Countries are sorted with the most even gender split at the top and the most lopsided at the bottom</p>
+          <div class="desc">
+            <p> This is an interactive view of <b>male</b> vs. <b>female</b> employment shares by country and year, shown
+              for selected employment types and income groups derived from data collected by <b>The World Bank</b>, an international organization that plays a vital role in collecting internationally comparable statistics about global development. 
+              Countries are ordered by most even to most
+              lopsided gender split. Additionally box-plots display the overall distribution shares for 
+              male and female employed populations from the filters selected.
+            </p>
+           
+            <p>The types of employment are as follows: </p>
+            
+          
+            <ul>
+              <li><strong>Wage and salaried workers:</strong> People who work for an employer and are paid wages or salaries.</li>
+              <li><strong>Employment in services:</strong> Workers employed in service-sector jobs like retail, education, healthcare, finance, and public services.</li>
+              <li><strong>Employment in industry:</strong> Workers employed in industry, including manufacturing, construction, mining, and utilities.</li>
+              <li><strong>Contributing family workers:</strong> People who work in a family business or farm without formal pay.</li>
+              <li><strong>Vulnerable employment:</strong> Workers in less secure jobs, typically own-account workers and contributing family workers.</li>
+              <li><strong>Self-employed:</strong> People who work for themselves rather than for an employer.</li>
+              <li><strong>Employers:</strong> Self-employed people who run a business and hire others.</li>
+              <li><strong>Employment in agriculture:</strong> Workers employed in farming, forestry, fishing, and related agricultural activity.</li>
+            </ul>
+
+            <p>It is important to note that types of employment are <b>not mutually exclusive</b>. </p>
+          </div>
+          
+          
         <div id="slider"></div>
-          Employment Type:  <select id="employmentVar" class="evariable" ></select>
-          Income Level: <select id="incomeVariable" class="ivariable" ></select>
+          <div id="buttons">
+            Employment Type:  <select id="employmentVar" class="evariable" ></select>
+            Income Level: <select id="incomeVariable" class="ivariable" ></select>
+          </div>
         </div>
         <div id="vis"></div> <!--  Will hold our visualization (SVG) -->
-  
+    </div>
+    <hr>
     <div class="container"> <!-- Centers content and sets max width -->
         <div class="non-svg">
           <h1> World Bank Data Suggest Worker Gap Nearly Solved in Middle and High-Income Nations </h1>
+          <div class="desc">
+          <p><b>The World Bank</b> is one of the largest and most reputable sources of development data and research, 
+            with open access to global development data banks. We draw from The World Bank's data sources of
+            gender equality indicators, specifically regarding wage and salaried employment shares
+            to see if progress has been made towards achieving a more balanced gender distribution in employment across countries
+            and income groups over time. 
+          </p>
+          <p><b>Interact with the slider</b> to see how distribution of employment shares
+            for men and women change overtime for each income level group. Countries are ordered from 
+            most even to most lopsided split. 
+          </p>
+          </div>
         <div id="slider2"></div>
          
           Income Level: <select id="incomeVariable2" class="ivariable2" ></select>

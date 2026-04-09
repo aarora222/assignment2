@@ -334,17 +334,7 @@ function updateBoxplot(filteredData, svgvar) {
         .attr("stroke", "#111")
         .attr("stroke-width", 2);
 
-    boxes.selectAll(".box-label")
-        .data(d => [d])
-        .join("text")
-        .attr("class", "box-label")
-        .transition(boxTransition)
-        .attr("x", boxX.bandwidth() / 2)
-        .attr("y", boxplotHeight + labelOffset)
-        .attr("text-anchor", "middle")
-        .attr("alignment-baseline", "middle")
-        .style("font-size", "11px")
-        .text(d => d.group);
+
     
 }
 
@@ -479,6 +469,8 @@ function updateVis(svgvar) {
         );
     addLegend(svgvar); 
     updateBoxplot(filteredData, svgvar);
+
+  
 }
 
 function updateAxes(filteredData) {

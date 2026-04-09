@@ -13,15 +13,22 @@
 }
 
 .non-svg {
-    text-align: center; 
+    text-align: center;
     transform: translateX(40px);
-    font-weight: bold; 
 }
-select {
-    margin-right: 20px; 
-    
+h1 {
+    text-align: left; 
+}
+.desc {
+    background-color: lightblue;
+    border-radius: 10px; 
+    padding: 20px; 
+    text-align: left; 
 }
 
+select {
+    margin: 0 10px;
+}
 #vis, #vis2, svg {
     margin: 1rem 0;
 }
