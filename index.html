@@ -43,9 +43,12 @@
           </div>
         </div>
         <div id="vis"></div> <!--  Will hold our visualization (SVG) -->
-        <div class="non-svg">
-              <h2>White Hat Write-Up</h2>
+        <hr>
+        <h2>White Hat Write-Up</h2>
+       
+              
               <div class="desc">
+                
                 <p>This visualization performs analysis on data from the World Bank's "World Development Indicators" dataset. It includes categorical variables for geographic region, like "Country", socioeconomic classifications like "IncomeGroup", and quantitative variables to track yearly changes for gender equality indicators across different industries (e.g., the number of women employed in agriculture).</p>
 
                 <p>We set both sets of female and male bars at a central x-value, utilizing a scale to calculate positive widths for male bars extending to the right, while calculating negative coordinate offsets and widths for the female bars extending leftwards. This presents viewers with a diverging bar chart, making comparisons between neighboring countries and gender gaps within those countries easily identifiable. We colored male and female data in steelblue and hot pink, respectively. These colors provide a modern aesthetic that allows for easy distinction between the two groups.</p>
@@ -79,7 +82,7 @@
           Income Level: <select id="incomeVariable2" class="ivariable2" ></select>
         </div>
         <div id="vis2"></div> <!--  Will hold our visualization (SVG) -->
-        <hr>
+          <hr>
           <h2>Black Hat Write-Up</h2>
           <div class="desc">
             <p>This visualization performs a deliberately selective analysis on data from the World Bank's "World Development Indicators" dataset. The income group dropdown is restricted to only three options — High, Upper middle, and Lower middle income — by slicing the <code>incomeLevels</code> array to exclude "All income" and "Low income" classifications. Excluding low income groups limits the data to support the idea that the worker gap is solved when it is not. Additionally, the employment type is hardcoded to <code>'Wage and salaried workers'</code> by assigning a non-functional string to the CSS selector variable, preventing the dropdown from functioning. This deliberately provides the user with less information to draw conclusions about gender inequalities under specific employment types. For example, "Employment in Industry" is excluded, which includes a much higher employment share of men than women.</p>
